@@ -13,6 +13,7 @@ datasets = "^2.11.0"
 coremltools = "^6.2"
 torch = "^1.13.1"
 transformers = "^4.27.4"
+termcolor = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.12.0"
