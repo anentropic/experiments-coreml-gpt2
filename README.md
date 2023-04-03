@@ -270,11 +270,12 @@ python -m experiment.server_pytorch --model=gpt2
 We can see some timings to load different sizes of the model (on an M1 Macbook Air 16GB RAM):
 
 | model | loading time |
-|-|-|
+|-|-:|
 | `gpt2` ("small") |  2.7s |
 | `gpt2-medium`    |  6.0s |
 | `gpt2-large`     | 12.6s |
 | `gpt2-xl`        | 29.5s |
+| `distilgpt2`     |  1.8s |
 
 Coincidentally, the time needed to generate a single response with each model seems to be roughly the same as its loading time. i.e. ~30s for `gpt2-xl`.
 
