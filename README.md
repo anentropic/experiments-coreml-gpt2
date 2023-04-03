@@ -270,8 +270,28 @@ python -m experiment.server_pytorch --model=gpt2
 We can see some timings to load different sizes of the model (on an M1 Macbook Air 16GB RAM):
 
 | model | loading time |
-|-|-|-|
+|-|-|
 | `gpt2` ("small") |  2.7s |
 | `gpt2-medium`    |  6.0s |
 | `gpt2-large`     | 12.6s |
 | `gpt2-xl`        | 29.5s |
+
+Coincidentally, the time needed to generate a single response with each model seems to be roughly the same as its loading time. i.e. ~30s for `gpt2-xl`.
+
+### Export to CoreML?
+
+I tried this https://github.com/huggingface/exporters as GPT2 was listed as a supported model.
+
+But I ran into this problem: https://github.com/huggingface/exporters/issues/18
+
+So, that looks like a dead end for now.
+
+### Next steps?
+
+One option would be to try again with `swift-coreml-transformers`. Perhaps try to write a Tokenizer class for HF/Pytorch which mimics the behaviour of the Swift one. Get it into a usable state and then benchmark it.
+
+Another would be to attempt a ground-up rewrite of GPT2 model, implementing the changes described in https://machinelearning.apple.com/research/neural-engine-transformers
+
+i.e. do for GPT2 what Apple already did for DistilBERT:
+https://github.com/apple/ml-ane-transformers/blob/main/ane_transformers/huggingface/distilbert.py
+
