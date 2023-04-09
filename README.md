@@ -296,3 +296,27 @@ Another would be to attempt a ground-up rewrite of GPT2 model, implementing the 
 i.e. do for GPT2 what Apple already did for DistilBERT:
 https://github.com/apple/ml-ane-transformers/blob/main/ane_transformers/huggingface/distilbert.py
 
+### Update
+
+Looks like someone else already did it (just in the last couple of weeks LOL):  
+https://github.com/smpanaro/more-ane-transformers
+
+Implements GPT2, based on https://github.com/karpathy/nanoGPT codebase, with the tweaks from `ane-transformers`.
+
+The notes are interesting: https://github.com/smpanaro/more-ane-transformers/blob/main/src/experiments/NOTES.md
+
+The tweaks they had to make are a little over my head and more extensive than I'd hoped. One thing they turned up seems to be a ~3GB memory limit, if the model is bigger it won't run on ANE. So that's approx 1.5B float16 model params. (@smpanaro seems to have got GPT2-XL (1.5B) running on the ANE.)
+
+This would seem to end hopes of one day running LLaMA 7B on ANE. E.g. quantized to Int4 that's still 3.5GB and I think ANE only deals with float16 anyway. Another idea is to sparsify the model (see https://github.com/AlpinDale/sparsegpt-for-LLaMA) ...it seems like 50% reduction in params is possible for the larger variants, but less so for the smaller.
+
+Or GPT-J-6B, reduced by 50% would be right at the limit and therefore likely too large.
+
+Promising models to potentially convert and run on ANE:
+- https://huggingface.co/EleutherAI/gpt-neo-1.3B It is a GPT-3 type which has better evaluation scores than GPT-2 1.5B (XL) and gives quite nice completions in the demo box on that page.
+- Facebook/Meta have https://huggingface.co/facebook/opt-1.3b and also https://huggingface.co/KoboldAI/fairseq-dense-1.3B (doesn't seem to have a 1st party version published to HF)
+- https://github.com/salesforce/CodeGen has 350M and 2B versions... 2B is too big as-is but maybe it could be distilled/pruned to fit. Only does "code gen from a comment string" i.e. roughly like Copilot.
+
+In short, the kind of models you can run on the ANE are the smaller ones that you will want to fine-tune for a specific task. The LLMs that can generalize across tasks are likely all too big.
+
+
+
