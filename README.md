@@ -312,11 +312,32 @@ This would seem to end hopes of one day running LLaMA 7B on ANE. E.g. quantized 
 Or GPT-J-6B, reduced by 50% would be right at the limit and therefore likely too large.
 
 Promising models to potentially convert and run on ANE:
+- https://huggingface.co/bigcode/santacoder a 1.1B param GPT2 model, [trained beyond Chinchilla-optimal](https://www.harmdevries.com/post/model-size-vs-compute-overhead/), on Python, Javascript & Java code. Seems both useful (local Copilot?) and feasible on ANE!
 - https://huggingface.co/EleutherAI/gpt-neo-1.3B It is a GPT-3 type which has better evaluation scores than GPT-2 1.5B (XL) and gives quite nice completions in the demo box on that page.
-- Facebook/Meta have https://huggingface.co/facebook/opt-1.3b and also https://huggingface.co/KoboldAI/fairseq-dense-1.3B (doesn't seem to have a 1st party version published to HF)
+- https://huggingface.co/google/flan-t5-large has 770M (or 1.1B?) params. It won't be good for chat, but the T5 models do very well at e.g. classification tasks, especially with fine-tuning.
+  - https://huggingface.co/Salesforce/codet5-large 770M "for code understanding and generation"
+  - https://huggingface.co/Salesforce/codet5-large-ntp-py 770M
+  - https://github.com/salesforce/CodeT5 the models above were subsequently trained via RL (on 'code challenge' word problem tasks), resulting in `CodeT5-finetuned_CodeRL` with checkpoint here: https://console.cloud.google.com/storage/browser/sfr-coderl-research/codet5_finetuned_codeRL;tab=objects?prefix=&forceOnObjectsSortingFiltering=false
+- Facebook/Meta have https://huggingface.co/facebook/opt-1.3b and also https://huggingface.co/KoboldAI/fairseq-dense-1.3B (doesn't seem to have a 1st party version published to HF) ... ohhh "fair" is FAIR as in Facebook AI Research.
+- https://huggingface.co/OpenAssistant/oasst-rm-2.1-pythia-1.4b-epoch-2.5 Pythia-1.4B with a GPT4all fine-tuning. I tried [chatting](https://open-assistant.io/chat/) with the bigger `OA_SFT_Llama_30B` and it is poor compared to ChatGPT, unsurprisingly, so I wouldn't hold much hope for this.
+- https://huggingface.co/bigscience/bloom-1b1 text generation with a science-y flavour
 - https://github.com/salesforce/CodeGen has 350M and 2B versions... 2B is too big as-is but maybe it could be distilled/pruned to fit. Only does "code gen from a comment string" i.e. roughly like Copilot.
+- https://mahis.life/bet/ / https://github.com/notmahi/bet Behaviour Transformers (for robot/agent control). Built on MinGPT (superseded by NanoGPT, as used by `more-ane-transformers` GPT2) don't know how many params. No weights released I think, have to train it yourself. Code and dataset are supplied though. Is something like this of any use for more textual agents?
 
 In short, the kind of models you can run on the ANE are the smaller ones that you will want to fine-tune for a specific task. The LLMs that can generalize across tasks are likely all too big.
 
+### Other resources
 
+- https://github.com/NVIDIA/FasterTransformer/
 
+    > FasterTransformer implements a highly optimized transformer layer for both the encoder and decoder for inference. On Volta, Turing and Ampere GPUs, the computing power of Tensor Cores are used automatically when the precision of the data and weights are FP16.
+
+    It's a different architecture and probbaly some stuff is NVIDIA-specific. But I wonder if some aspects are transferable.
+
+- https://github.com/Ki6an/fastT5
+
+    Similarly.
+
+- https://coremltools.readme.io/docs/compressing-ml-program-weights#use-sparse-representation
+
+    `coremltools` has support for sparse weights and tool to sparsify them. Does this translate all the way through to memory usage of the model at inference time?  I'm guessing maybe yes, since most of the Apple tooling has an eye towards iPhone usage.
